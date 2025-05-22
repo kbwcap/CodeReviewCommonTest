@@ -13,10 +13,9 @@ void loadKeywords(KeywordManager& manager) {
 }
 
 int main() {
-
 	KeywordManager manager(new LevenshteinSimilarity());
 	loadKeywords(manager);
-
-	return 0;
+	testing::InitGoogleMock();
+	return RUN_ALL_TESTS();
 }
 

@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="keyword_manager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="unitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="keyword_weekday_500.txt" />

@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>unitTest.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+#include "gmock/gmock.h"
+#include "keyword_manager.h"
+using namespace std;
+
+<span style = "background-color:#dfd">TEST(BwTestAll, ExactMatch) {
+	LevenshteinSimilarity sim;
+	EXPECT_EQ(sim.computeScore("apple", "apple"), 0);
+}</span>
+
+<span style = "background-color:#dfd">TEST(BwTestAll, SimilarWords) {
+	LevenshteinSimilarity sim;
+	EXPECT_EQ(sim.computeScore("apple", "appla"), 1);
+}</span>
+
+<span style = "background-color:#dfd">TEST(BwTestAll, KeywordManagerGetWeekdayIndex) {
+	KeywordManager manager(new LevenshteinSimilarity());
+	string result = manager.processKeyword("apple", "appla");
+	EXPECT_EQ(result, "ERR_CASE");
+}</span>
+
+<span style = "background-color:#dfd">TEST(BwTestAll, KeywordManagerGetGroupIndex) {
+	KeywordManager manager(new LevenshteinSimilarity());
+	string result = manager.processKeyword("water", "monday");
+	EXPECT_EQ(result, "water");
+}</span>
+
+<span style = "background-color:#dfd">TEST(BwTestAll, KeywordManagerPerfectlySameKeyword) {
+	KeywordManager manager(new LevenshteinSimilarity());
+	string result = manager.processKeyword("water", "monday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("water", "monday");
+	EXPECT_EQ(result, "water");
+}</span>
+
+<span style = "background-color:#dfd">TEST(BwTestAll, KeywordManagerSimilarWord) {
+	KeywordManager manager(new LevenshteinSimilarity());
+	string result = manager.processKeyword("water", "monday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("witer", "monday");
+	EXPECT_EQ(result, "water");
+}</span>
+
+<span style = "background-color:#dfd">TEST(BwTestAll, KeywordManagerWeekBestScore) {
+	KeywordManager manager(new LevenshteinSimilarity());
+	string result = manager.processKeyword("water", "monday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("pepper", "monday");
+	EXPECT_EQ(result, "pepper");
+	result = manager.processKeyword("orange", "monday");
+	EXPECT_EQ(result, "orange");
+	result = manager.processKeyword("kiss", "monday");
+	EXPECT_EQ(result, "kiss");
+	result = manager.processKeyword("light", "monday");
+	EXPECT_EQ(result, "light");
+	result = manager.processKeyword("dog", "monday");
+	EXPECT_EQ(result, "dog");
+	result = manager.processKeyword("cat", "monday");
+	EXPECT_EQ(result, "cat");
+	result = manager.processKeyword("home", "monday");
+	EXPECT_EQ(result, "home");
+	result = manager.processKeyword("coffee", "monday");
+	EXPECT_EQ(result, "coffee");
+	result = manager.processKeyword("gift", "monday");
+	EXPECT_EQ(result, "gift");
+}</span>
+
+
+<span style = "background-color:#dfd">TEST(BwTestAll, KeywordManagerReArangeScore) {
+	KeywordManager manager(new LevenshteinSimilarity());
+	string result = manager.processKeyword("water", "monday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("pepper", "monday");
+	EXPECT_EQ(result, "pepper");
+	result = manager.processKeyword("orange", "monday");
+	EXPECT_EQ(result, "orange");
+	result = manager.processKeyword("kiss", "monday");
+	EXPECT_EQ(result, "kiss");
+	result = manager.processKeyword("light", "monday");
+	EXPECT_EQ(result, "light");
+	result = manager.processKeyword("dog", "monday");
+	EXPECT_EQ(result, "dog");
+	result = manager.processKeyword("cat", "monday");
+	EXPECT_EQ(result, "cat");
+	result = manager.processKeyword("home", "monday");
+	EXPECT_EQ(result, "home");
+	result = manager.processKeyword("coffee", "monday");
+	EXPECT_EQ(result, "coffee");
+	for (int i = 0; i &lt; 300; ++i) {
+		result = manager.processKeyword("coffee", "monday");
+	}
+	EXPECT_EQ(result, "coffee");
+}</span>
+
+<span style = "background-color:#dfd">TEST(BwTestAll, KeywordManagerSameNameInInsertOrUpdate) {
+	KeywordManager manager(new LevenshteinSimilarity());
+	string result = manager.processKeyword("water", "monday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("witer", "tuesday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("weter", "wednesday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("wbter", "thursday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("wnter", "friday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("water", "saturday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("weter", "monday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("wster", "tuesday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("whter", "wednesday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("wkter", "thursday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("wlter", "friday");
+	EXPECT_EQ(result, "water");
+	result = manager.processKeyword("wpter", "saturday");
+	EXPECT_EQ(result, "water");
+}</span></pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

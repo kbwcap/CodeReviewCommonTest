@@ -9,6 +9,7 @@
 
 const int MAX_SCORE = 2100000000;
 const int MAX_ENTRIES = 10;
+const int ERR_MSG = -1;
 
 class SimilarityStrategy {
 public:

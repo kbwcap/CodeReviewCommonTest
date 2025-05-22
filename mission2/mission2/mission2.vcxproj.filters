@@ -21,6 +21,9 @@
     <ClCompile Include="keyword_manager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="unitTest.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="keyword_weekday_500.txt">

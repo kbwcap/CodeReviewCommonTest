@@ -1,6 +1,5 @@
 #include "keyword_manager.h"
 
-
 // 레벤슈타인 거리 계산 알고리즘 (문자열 유사도 검사)
 int LevenshteinSimilarity::computeScore(const std::string& a, const std::string& b)  {
 	const size_t len_a = a.size();
@@ -19,6 +18,7 @@ int LevenshteinSimilarity::computeScore(const std::string& a, const std::string&
 				d[i][j] = 1 + std::min({ d[i - 1][j], d[i][j - 1], d[i - 1][j - 1] });
 		}
 	}
+
 	return d[len_a][len_b];
 }
 
@@ -48,6 +48,15 @@ int KeywordManager::getWeekdayIndex(const std::string& day) {
 		{"saturday", 5},
 		{"sunday", 6}
 	};
+
+	auto iter = dayMap.begin();
+	for (; iter != dayMap.end(); ++iter) {
+		if (iter->first == day)
+			break;
+	}
+	if (iter == dayMap.end())
+		return ERR_MSG;
+
 	return dayMap[day];
 }
 
@@ -70,12 +79,7 @@ void KeywordManager::reAdjustScore() {
 }
 
 void KeywordManager::insertOrUpdate(std::vector<WordNode>& list, const std::string& word, int score) {
-	for (auto& node : list) {
-		if (node.name == word) {
-			node.point += static_cast<int>(node.point * 0.1);
-			return;
-		}
-	}
+
 	if (list.size() < MAX_ENTRIES) {
 		list.push_back({ word, score });
 	}
@@ -89,6 +93,8 @@ std::string KeywordManager::processKeyword(const std::string& word, const std::s
 	currentScore++;
 
 	int dayIndex = getWeekdayIndex(day);
+	if (dayIndex < 0)
+		return "ERR_CASE";
 
 	// 평일 / 주말
 	int groupIndex = getGroupIndex(dayIndex);
