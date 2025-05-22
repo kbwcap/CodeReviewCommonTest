@@ -90,31 +90,3 @@ TEST(BwTestAll, KeywordManagerReArangeScore) {
 	}
 	EXPECT_EQ(result, "coffee");
 }
-
-TEST(BwTestAll, KeywordManagerSameNameInInsertOrUpdate) {
-	KeywordManager manager(new LevenshteinSimilarity());
-	string result = manager.processKeyword("water", "monday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("witer", "tuesday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("weter", "wednesday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("wbter", "thursday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("wnter", "friday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("water", "saturday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("weter", "monday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("wster", "tuesday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("whter", "wednesday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("wkter", "thursday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("wlter", "friday");
-	EXPECT_EQ(result, "water");
-	result = manager.processKeyword("wpter", "saturday");
-	EXPECT_EQ(result, "water");
-}

@@ -49,6 +49,19 @@
 	return false;
 }</span>
 
+<span style = "background-color:#dfd">bool KeywordManager::checkInvaildWeekday(const std::map&lt;std::string, int&gt;&amp; dayMap, const std::string&amp; day) {</span>
+
+<span style = "background-color:#dfd">	auto iter = dayMap.begin();
+	for (; iter != dayMap.end(); ++iter) {
+		if (iter-&gt;first == day)
+			break;
+	}
+	if (iter == dayMap.end())
+		return true;</span>
+
+<span style = "background-color:#dfd">	return false;
+}</span>
+
 <span style = "background-color:#dfd">int KeywordManager::getWeekdayIndex(const std::string&amp; day) {
 	static std::map&lt;std::string, int&gt; dayMap = {</span>
 		{"monday", 0},
@@ -60,13 +73,10 @@
 		{"sunday", 6}
 	};
 
-<span style = "background-color:#dfd">	auto iter = dayMap.begin();
-	for (; iter != dayMap.end(); ++iter) {
-		if (iter-&gt;first == day)
-			break;
-	}
-	if (iter == dayMap.end())
+<span style = "background-color:#dfd">	if (checkInvaildWeekday(dayMap, day)) {
 		return ERR_MSG;</span>
+	}
+
 
 <span style = "background-color:#dfd">	return dayMap[day];
 }</span>
@@ -89,9 +99,8 @@
 	}
 }</span>
 
-<span style = "background-color:#dfd">void KeywordManager::insertOrUpdate(std::vector&lt;WordNode&gt;&amp; list, const std::string&amp; word, int score) {</span>
-
-<span style = "background-color:#dfd">	if (list.size() &lt; MAX_ENTRIES) {
+<span style = "background-color:#dfd">void KeywordManager::insertOrUpdate(std::vector&lt;WordNode&gt;&amp; list, const std::string&amp; word, int score) {
+	if (list.size() &lt; MAX_ENTRIES) {
 		list.push_back({ word, score });
 	}
 	else if (list.back().point &lt; score) {

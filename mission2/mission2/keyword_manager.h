@@ -28,7 +28,7 @@ struct WordNode {
 	int point;
 
 	bool operator<(const WordNode& other) const {
-		return point < other.point;
+		return point > other.point;
 	}
 };
 
@@ -45,6 +45,7 @@ private:
 	bool isSimilar(const std::string& a, const std::string& b);
 	void reAdjustScore();
 	void insertOrUpdate(std::vector<WordNode>& list, const std::string& word, int score);
+	bool checkInvaildWeekday(const std::map<std::string, int>& dayMap, const std::string& day);
 
 public:
 	KeywordManager(SimilarityStrategy *sim)

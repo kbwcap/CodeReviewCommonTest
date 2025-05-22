@@ -38,6 +38,19 @@ bool KeywordManager::isSimilar(const std::string& a, const std::string& b) {
 	return false;
 }
 
+bool KeywordManager::checkInvaildWeekday(const std::map<std::string, int>& dayMap, const std::string& day) {
+
+	auto iter = dayMap.begin();
+	for (; iter != dayMap.end(); ++iter) {
+		if (iter->first == day)
+			break;
+	}
+	if (iter == dayMap.end())
+		return true;
+
+	return false;
+}
+
 int KeywordManager::getWeekdayIndex(const std::string& day) {
 	static std::map<std::string, int> dayMap = {
 		{"monday", 0},
@@ -49,13 +62,10 @@ int KeywordManager::getWeekdayIndex(const std::string& day) {
 		{"sunday", 6}
 	};
 
-	auto iter = dayMap.begin();
-	for (; iter != dayMap.end(); ++iter) {
-		if (iter->first == day)
-			break;
-	}
-	if (iter == dayMap.end())
+	if (checkInvaildWeekday(dayMap, day)) {
 		return ERR_MSG;
+	}
+
 
 	return dayMap[day];
 }
@@ -79,7 +89,6 @@ void KeywordManager::reAdjustScore() {
 }
 
 void KeywordManager::insertOrUpdate(std::vector<WordNode>& list, const std::string& word, int score) {
-
 	if (list.size() < MAX_ENTRIES) {
 		list.push_back({ word, score });
 	}

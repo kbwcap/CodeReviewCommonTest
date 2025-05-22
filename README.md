@@ -1,4 +1,4 @@
-# CodeReviewCommonTest
+# CodeReviewCommonProject
 
 ### 요구사항 
 |요구사항|세부사항|적용여부|기타|
