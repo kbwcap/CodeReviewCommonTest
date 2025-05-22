@@ -8,23 +8,22 @@
 
 using namespace std;
 
-struct Node {
-	string w;
-	string wk;
-};
 
-struct Node2 {
+const int MAX_SCORE = 2100000000;
+const int MAX_ENTRIES = 10;
+
+struct WordNode {
 	string name;
 	int point;
 
-	bool operator<(const Node2& other) const {
+	bool operator<(const WordNode& other) const {
 		return point < other.point;
 	}
 };
 
-vector<Node2> weekBest[7]; //월 ~ 금
-vector<Node2> twoBest[2]; //평일, 주말
-int UZ = 9;
+vector<WordNode> weekBest[7]; //월 ~ 금
+vector<WordNode> groupBest[2]; //평일, 주말
+int currentScore = 9;
 
 // 레벤슈타인 거리 계산 알고리즘 (문자열 유사도 검사)
 int levenshtein(const std::string& a, const std::string& b) {
@@ -63,126 +62,111 @@ bool similer(const std::string& a, const std::string& b) {
 	return false;
 }
 
-string input2(string w, string wk) {
-	UZ++;
+int getWeekdayIndex(const string& day) {
+	static map<string, int> dayMap = {
+		{"monday", 0}, 
+		{"tuesday", 1}, 
+		{"wednesday", 2},
+		{"thursday", 3}, 
+		{"friday", 4},
+		{"saturday", 5}, 
+		{"sunday", 6}
+	};
+	return dayMap[day];
+}
 
-	int index = 0;
-	if (wk == "monday") index = 0;
-	if (wk == "tuesday") index = 1;
-	if (wk == "wednesday") index = 2;
-	if (wk == "thursday") index = 3;
-	if (wk == "friday") index = 4;
-	if (wk == "saturday") index = 5;
-	if (wk == "sunday") index = 6;
+int getGroupIndex(int weekdayIndex) {
+	return (weekdayIndex >= 0 && weekdayIndex <= 4) ? 0 : 1;
+}
 
-	//평일 / 주말
-	int index2 = 0;
-	if (index >= 0 && index <= 4) index2 = 0;
-	else index2 = 1;
 
-	int point = UZ;
+void reAdjustScore() {
+	currentScore = 9;
+	for (int i = 0; i < 7; ++i) {
+		int score = 1;
+		for (WordNode& node : weekBest[i])
+			node.point = score++;
+	}
+	for (int i = 0; i < 2; ++i) {
+		int score = 1;
+		for (WordNode& node : groupBest[i])
+			node.point = score++;
+	}
+}
+
+void insertOrUpdate(vector<WordNode>& list, const string& word, int score) {
+	for (auto& node : list) {
+		if (node.name == word) {
+			node.point += static_cast<int>(node.point * 0.1);
+			return;
+		}
+	}
+	if (list.size() < MAX_ENTRIES) {
+		list.push_back({ word, score });
+	}
+	else if (list.back().point < score) {
+		list.back() = { word, score };
+	}
+	sort(list.begin(), list.end());
+}
+
+string processKeyword(string word, string day) {
+	currentScore++;
+
+	int dayIndex = getWeekdayIndex(day); 
+
+	// 평일 / 주말
+	int groupIndex = getGroupIndex(dayIndex);
+	int point = currentScore;
 
 	//관리 목록에 존재하는지 확인
 	//관리되는 키워드이면 점수가 증가
 
-	long long int max1 = 0;
-	long long int max2 = 0;
-
-	int flag = 0;
-	for (Node2& node : weekBest[index]) {
-		if (node.name == w) {
-			max1 = node.point + (node.point * 0.1);
-			node.point += (node.point * 0.1);
-			flag = 1;
-			break;
+	for (WordNode& node : weekBest[dayIndex]) {
+		if (node.name == word) {
+			node.point += static_cast<int>(node.point * 0.1);
+			if (currentScore >= MAX_SCORE || node.point >= MAX_SCORE)
+				reAdjustScore();
+			return word;
 		}
 	}
-
-	for (Node2& node : twoBest[index2]) {
-		if (node.name == w) {
-			max2 = node.point + (node.point * 0.1);
-			node.point += (node.point * 0.1);
-			break;
-		}
-	}
-
-	//재정렬 작업
-	if (UZ >= 2100000000 || max1 >= 2100000000 || max2 >= 2100000000) {
-		UZ = 9;
-		for (int i = 0; i < 5; i++) {
-			int num = 1;
-			for (Node2& node : weekBest[i]) {
-				node.point = num;
-				num++;
-			}
-		}
-		for (int i = 0; i < 2; i++) {
-			int num = 1;
-			for (Node2& node : twoBest[i]) {
-				node.point = num;
-				num++;
-			}
-		}
-	}
-
-	if (flag == 1) {
-		return w;
-	}
-
 
 	//찰떡 HIT
-	for (Node2& node : weekBest[index]) {
-		if (similer(node.name, w)) {
+	for (WordNode& node : weekBest[dayIndex]) {
+		if (similer(node.name, word)) {
 			return node.name;
 		}
 	}
 
-	for (Node2& node : twoBest[index]) {
-		if (similer(node.name, w)) {
+	for (WordNode& node : groupBest[groupIndex]) {
+		if (similer(node.name, word)) {
 			return node.name;
 		}
 	}
 
-	//완벽 HIT / 찰떡 HIT 둘다 아닌경우
-	if (weekBest[index].size() < 10) {
-		weekBest[index].push_back({ w, point });
-		std::sort(weekBest[index].begin(), weekBest[index].end());
-	}
+	// 신규 등록
+	insertOrUpdate(weekBest[dayIndex], word, point);
+	insertOrUpdate(groupBest[groupIndex], word, point);
 
-	if (twoBest[index].size() < 10) {
-		twoBest[index].push_back({ w, point });
-		std::sort(twoBest[index].begin(), twoBest[index].end());
-	}
-
-	if (weekBest[index].size() == 10) {
-		if (weekBest[index].back().point < point) {
-			weekBest[index].pop_back();
-			weekBest[index].push_back({ w, point });
-			std::sort(weekBest[index].begin(), weekBest[index].end());
-		}
-	}
-
-	if (twoBest[index].size() == 10) {
-		if (twoBest[index].back().point < point) {
-			twoBest[index].pop_back();
-			twoBest[index].push_back({ w, point });
-			std::sort(twoBest[index].begin(), twoBest[index].end());
-		}
-	}
-
-	return w;
+	return word;
 }
 
-void input() {
+void loadKeywords() {
 	ifstream fin{ "keyword_weekday_500.txt" }; //500개 데이터 입력
+
+	if (!fin.is_open()) {
+		std::cerr << "파일 열기 실패!" << std::endl;
+		return;
+	}
+
 	for (int i = 0; i < 500; i++) {
-		string t1, t2;
-		fin >> t1 >> t2;
-		string ret = input2(t1, t2);
-		std::cout << ret << "\n";
+		string word, day;
+		fin >> word >> day;
+		string ret = processKeyword(word, day);
+		std::cout << ret <<  " <== " << word << "\n";
 	}
 }
 
 int main() {
-	input();
+	loadKeywords();
 }
